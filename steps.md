@@ -1,18 +1,18 @@
 ### Step 1. Create the working directory
 
-```Shell
+```bash
 mkdir ~/lab1a_bash && cd ~/lab1a_bash
 ```
 
 ### Step 2. Create script1_sysinfo.sh
 
-```Shell
+```bash
 nano script1_sysinfo.sh
 ```
 
 Copy and paste this script:
 
-```Shell
+```bash
 #!/bin/bash
 
 host_name="$(hostname)"
@@ -30,7 +30,7 @@ echo -e "\e[32mKernel Version   : $kernel\e[0m"
 
 Save the file, then make it executable and run it.
 
-```Shell
+```bash
 chmod +x script1_sysinfo.sh
 bash script1_sysinfo.sh
 ```
@@ -45,7 +45,7 @@ Actual output:
 
 This script reads the root filesystem usage with `df`. The highest threshold must be tested first: a usage value above 90 is also above 70, so checking 70 first would prevent the `CRITICAL` branch from running.
 
-```Shell
+```bash
 nano script2_diskcheck.sh
 ```
 
@@ -71,14 +71,14 @@ fi
 
 Save the file and test the actual filesystem first:
 
-```Shell
+```bash
 chmod +x script2_diskcheck.sh
 bash script2_diskcheck.sh
 ```
 
 Use the temporary value to demonstrate all outcomes. These tests do not change the real disk usage:
 
-```Shell
+```bash
 bash script2_diskcheck.sh 85
 bash script2_diskcheck.sh 95
 ```
@@ -91,7 +91,7 @@ Actual output:
 
 This script uses an array and a function. The function receives each account name as its first positional argument, `$1`, and prints the account's `id` information when it exists.
 
-```Shell
+```bash
 nano script3_userreport.sh
 ```
 
@@ -123,7 +123,7 @@ echo "Total users checked: ${#USERS[@]}"
 
 Run the report:
 
-```Shell
+```bash
 chmod +x script3_userreport.sh
 bash script3_userreport.sh
 ```
@@ -138,7 +138,7 @@ Actual output:
 
 Use strict mode and register the required `ERR` trap before creating the test tree. The script operates only on `~/lab1a_bash/tmptest`; never run the deletion command against the live `/tmp` directory.
 
-```Shell
+```bash
 nano script4_cleanup.sh
 ```
 
@@ -175,7 +175,7 @@ exit 0
 
 Run the successful cleanup. The ten-day-old file should be removed while the new file remains:
 
-```Shell
+```bash
 chmod +x script4_cleanup.sh
 bash script4_cleanup.sh
 ```
@@ -190,13 +190,13 @@ Test the trap with the optional intentional error. This command is expected to r
 
 Create a file named 'tmptest':
 
-```Shell
+```bash
 touch tmptest
 ```
 
 Run script4_cleanup again:
 
-```Shell
+```bash
 bash script4_cleanup.sh
 ```
 
@@ -212,7 +212,7 @@ List a directory that does not exist.
 
 Add "ls /fakedirectory" to the script:
 
-```Shell
+```bash
 ...
 trap 'echo "ERROR at line $LINENO" >> "$LOG_FILE"; exit 1' ERR
 
@@ -230,7 +230,7 @@ Test trap 2
 
 The rotation function deletes `.5` first, shifts `.4` through `.1` upward, and finally moves the current log to `.1`. The numbered names are built from the supplied path with parameter expansion.
 
-```Shell
+```bash
 nano log_rotate.sh
 ```
 
@@ -277,7 +277,7 @@ done
 
 Run the script and inspect the directory after every rotation:
 
-```Shell
+```bash
 chmod +x log_rotate.sh
 bash log_rotate.sh
 ```
@@ -286,7 +286,7 @@ After the fifth rotation, the directory must never contain a `.6` file. The olde
 
 ![1789487662584](image/steps/1789487662584.png)
 
-```Shell
+```bash
 ls logs/
 ```
 
@@ -296,7 +296,7 @@ ls logs/
 
 This script creates a new timestamped destination, writes start and end timestamps to `backup.log`, and copies the log directory with `rsync`. The `ERR` trap records a failure timestamp and returns status `1` when a command fails.
 
-```Shell
+```bash
 nano backup_auto.sh
 ```
 
@@ -324,7 +324,7 @@ echo "Backup completed! $DEST"
 
 Run the backup TWICE. Wait at least one second between runs if both commands might execute during the same second, because the timestamp is part of the directory name:
 
-```Shell
+```bash
 chmod +x backup_auto.sh
 bash backup_auto.sh
 ```
@@ -333,7 +333,7 @@ bash backup_auto.sh
 
 Verify that there are two separate timestamped directories:
 
-```Shell
+```bash
 ls backup_2026*
 ```
 
@@ -341,7 +341,7 @@ ls backup_2026*
 
 Restore one file from the first backup.
 
-```Shell
+```bash
 cp backup_20260916_000710/app.log.1 logs/app.log.1.restored
 ```
 
@@ -349,7 +349,7 @@ cp backup_20260916_000710/app.log.1 logs/app.log.1.restored
 
 Verify that 2 are identical.
 
-```Shell
+```bash
 cat logs/app.log.1 logs/app.log.1.restored
 ```
 
@@ -359,7 +359,7 @@ cat logs/app.log.1 logs/app.log.1.restored
 
 Check the home directory before installing the cron entry. The crontab must use absolute paths; do not rely on `~` being expanded by cron.
 
-```Shell
+```bash
 crontab -e
 ```
 
@@ -371,7 +371,7 @@ Add this line if the account home is `/home/sysadmin`:
 
 If the account uses a different home directory, replace both `/home/sysadmin` prefixes with the absolute path printed by `echo "$HOME"`. Save the crontab and confirm the entry:
 
-```Shell
+```bash
 crontab -l
 ```
 
@@ -383,7 +383,7 @@ Do not change the system clock. To test without waiting ten minutes, temporarily
 
 Wait until at least two entries have appeared (2 minutes), then edit the crontab again and restore the required `*/5` schedule. Check the redirected output and the cron service journal:
 
-```Shell
+```bash
 cat cron_disk.log
 journalctl -u cron --since "20 min ago" --no-pager
 ```
