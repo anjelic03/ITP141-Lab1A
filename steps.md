@@ -186,7 +186,7 @@ Actual output:
 
 Test the trap with the optional intentional error. This command is expected to return exit status `1`:
 
-#### Trap 1
+#### Test Trap 1
 
 Create a file named 'tmptest':
 
@@ -206,7 +206,7 @@ Actual output:
 
 ![1789486135433](image/steps/1789486135433.png)
 
-#### Trap 2
+#### Test Trap 2
 
 List a directory that does not exist.
 
