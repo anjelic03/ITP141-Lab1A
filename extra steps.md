@@ -1,5 +1,3 @@
-q
-
 # Lab 1A: Bash Scripts and Automation
 
 ## Step 1. Create the working directory
@@ -244,6 +242,44 @@ nano log_rotate.sh
 
 Copy and paste this script:
 
+```bash
+#!/bin/bash
+
+rotate_log() {
+        local log_file="$1"
+        local base="${1%.log}"
+
+        rm -f "${base}.5.log"
+
+        for ((i=4; i>=1; i--)); do
+                if [[ -f "${base}.${i}.log" ]]; then
+                        mv "${base}.${i}.log"  "${base}.$((i + 1)).log"
+                fi
+        done
+
+        if [[ -f "$log_file" ]]; then
+                mv "$log_file" "${base}.1.log"
+        fi
+}
+
+LOG_DIR="$HOME/lab1a_bash/logs"
+LOG_FILE="$LOG_DIR/app.log"
+
+mkdir -p "$LOG_DIR"
+
+echo "Initial log entry" > "$LOG_FILE"
+
+for j in {1..7}; do
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] #$j Log entry before rotation" >> "$LOG_FILE"
+
+        rotate_log "$LOG_FILE"
+
+        echo "Log rotation #$j"
+        echo "$(ls $LOG_DIR)"
+        echo
+done
+```
+
 Run the script:
 
 ```bash
@@ -379,40 +415,3 @@ Actual output:
 
 ![Cron journal output](image/steps/1789489766719.png)
 
-```bash
-#!/bin/bash
-
-rotate_log() {
-        local log_file="$1"
-        local base="${1%.log}"
-
-        rm -f "${base}.5.log"
-
-        for ((i=4; i>=1; i--)); do
-                if [[ -f "${base}.${i}.log" ]]; then
-                        mv "${base}.${i}.log"  "${base}.$((i + 1)).log"
-                fi
-        done
-
-        if [[ -f "$log_file" ]]; then
-                mv "$log_file" "${base}.1.log"
-        fi
-}
-
-LOG_DIR="$HOME/lab1a_bash/logs"
-LOG_FILE="$LOG_DIR/app.log"
-
-mkdir -p "$LOG_DIR"
-
-echo "Initial log entry" > "$LOG_FILE"
-
-for j in {1..7}; do
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] #$j Log entry before rotation" >> "$LOG_FILE"
-
-        rotate_log "$LOG_FILE"
-
-        echo "Log rotation #$j"
-        echo "$(ls $LOG_DIR)"
-        echo
-done
-```
